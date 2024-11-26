@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kay_musicplayer/core/provider/playlist_provider.dart';
-import 'package:kay_musicplayer/ui/pages/home/home_page.dart';
+import 'package:kay_musicplayer/core/routes/route_generator.dart';
 import 'package:kay_musicplayer/ui/pages/home/library/tracks/bloc/tracks_bloc.dart';
 import 'package:kay_musicplayer/ui/theme/theme_provider.dart';
 
@@ -35,7 +35,8 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: Provider.of<ThemeProvider>(context).themeData,
-      home: const HomePage(),
+      initialRoute: Routes.main,
+      onGenerateRoute: Routes.routeGenerator,
     );
   }
 }

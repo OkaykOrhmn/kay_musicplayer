@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kay_musicplayer/core/routes/route_generator.dart';
 import 'package:kay_musicplayer/ui/pages/home/library/library_screen.dart';
 import 'package:kay_musicplayer/ui/pages/home/playlist/playlist_screen.dart';
-import 'package:kay_musicplayer/ui/pages/settings/settings_page.dart';
 import 'package:kay_musicplayer/ui/theme/theme_provider.dart';
 
 import 'package:provider/provider.dart';
@@ -64,11 +64,7 @@ class _HomePageState extends State<HomePage> {
               title: const Text('Settings'),
               leading: const Icon(CupertinoIcons.settings),
               onTap: () {
-                Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                      builder: (context) => const SettingsPage(),
-                    ));
+                Navigator.pushNamed(context, Routes.settings);
               },
             ),
           ],
@@ -78,28 +74,23 @@ class _HomePageState extends State<HomePage> {
         index: index,
         children: const [LibraryScreen(), PlaylistScreen()],
       ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.only(top: 8),
-        decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: Colors.grey[700]!))),
-        child: Theme(
-          data: Theme.of(context).copyWith(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            hoverColor: Colors.transparent,
-          ),
-          child: BottomNavigationBar(
-              onTap: (value) => setState(() => index = value),
-              currentIndex: index,
-              showUnselectedLabels: false,
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                    icon: Icon(CupertinoIcons.music_note_2), label: 'Library'),
-                BottomNavigationBarItem(
-                    icon: Icon(CupertinoIcons.music_note_list),
-                    label: 'Playlist'),
-              ]),
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          hoverColor: Colors.transparent,
         ),
+        child: BottomNavigationBar(
+            onTap: (value) => setState(() => index = value),
+            currentIndex: index,
+            showUnselectedLabels: false,
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                  icon: Icon(CupertinoIcons.music_note_2), label: 'Library'),
+              BottomNavigationBarItem(
+                  icon: Icon(CupertinoIcons.music_note_list),
+                  label: 'Playlist'),
+            ]),
       ),
     );
   }

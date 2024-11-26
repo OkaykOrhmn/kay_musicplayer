@@ -14,6 +14,7 @@ class TracksBloc extends Bloc<TracksEvent, TracksState> {
       if (event is GetAllTracks) {
         emit(TracksLoading());
         try {
+          tracks.clear();
           AudioLibraryManager audioLibraryManager = AudioLibraryManager();
           await audioLibraryManager.initial();
           tracks.addAll(audioLibraryManager.playList);

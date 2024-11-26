@@ -24,7 +24,7 @@ class _LibraryScreenState extends State<LibraryScreen>
           body: Column(
         children: [
           TabBar(
-            isScrollable: true,
+            isScrollable: false,
             tabs: [
               Tab(
                 // icon: Icon(Icons.music_note),
