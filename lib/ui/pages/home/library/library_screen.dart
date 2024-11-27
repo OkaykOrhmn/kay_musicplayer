@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kay_musicplayer/ui/pages/home/library/albums/albums_screen.dart';
+import 'package:kay_musicplayer/ui/pages/home/library/atrists/artists_screen.dart';
+import 'package:kay_musicplayer/ui/pages/home/library/geners/geners_screen.dart';
 import 'package:kay_musicplayer/ui/pages/home/library/tracks/tracks_screen.dart';
 
 class LibraryScreen extends StatefulWidget {
@@ -52,9 +55,9 @@ class _LibraryScreenState extends State<LibraryScreen>
             child: TabBarView(
               children: [
                 TracksScreen(),
-                Icon(Icons.music_video),
-                Icon(Icons.camera_alt),
-                Icon(Icons.grade),
+                AlbumsScreen(),
+                ArtistsScreen(),
+                GenersScreen(),
                 Icon(Icons.email),
               ],
             ),

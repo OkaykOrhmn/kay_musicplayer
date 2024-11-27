@@ -1,9 +1,12 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kay_musicplayer/core/routes/route_generator.dart';
+import 'package:kay_musicplayer/main.dart';
 import 'package:kay_musicplayer/ui/pages/home/library/library_screen.dart';
 import 'package:kay_musicplayer/ui/pages/home/playlist/playlist_screen.dart';
 import 'package:kay_musicplayer/ui/theme/theme_provider.dart';
+import 'package:kay_musicplayer/ui/widgets/components/player/song_container.dart';
 
 import 'package:provider/provider.dart';
 
@@ -70,9 +73,57 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: IndexedStack(
-        index: index,
-        children: const [LibraryScreen(), PlaylistScreen()],
+      body: Column(
+        children: [
+          Expanded(
+            child: IndexedStack(
+              index: index,
+              children: const [LibraryScreen(), PlaylistScreen()],
+            ),
+          ),
+          StreamBuilder<MediaItem?>(
+            stream: audioHandler.mediaItem.stream,
+            builder: (context, song) {
+              if (song.data == null) return const SizedBox.shrink();
+              return const SizedBox(
+                height: 70,
+              );
+            },
+          )
+        ],
+      ),
+      bottomSheet: StreamBuilder<MediaItem?>(
+        stream: audioHandler.mediaItem.stream,
+        builder: (context, song) {
+          if (song.data == null) return const SizedBox.shrink();
+          return InkWell(
+              onTap: () => Navigator.pushNamed(context, Routes.player),
+              child: SongContainer(
+                song: song.data!,
+                leading: StreamBuilder<PlaybackState>(
+                  stream: audioHandler.playbackState.stream,
+                  builder: (context, playbackState) {
+                    if (playbackState.data == null) {
+                      return const SizedBox.shrink();
+                    }
+                    bool playing = playbackState.data!.playing;
+                    return IconButton(
+                        onPressed: () {
+                          if (playing) {
+                            audioHandler.pause();
+                          } else {
+                            audioHandler.play();
+                          }
+                        },
+                        icon: Icon(
+                          playing
+                              ? Icons.pause_outlined
+                              : Icons.play_arrow_rounded,
+                        ));
+                  },
+                ),
+              ));
+        },
       ),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(

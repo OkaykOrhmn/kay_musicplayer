@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:kay_musicplayer/ui/pages/home/home_page.dart';
 import 'package:kay_musicplayer/ui/pages/player/player_page.dart';
 import 'package:kay_musicplayer/ui/pages/settings/settings_page.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 
 class Routes {
   static const String main = '/';
@@ -19,9 +18,7 @@ class Routes {
             return const SettingsPage();
 
           case player:
-            return PlayerPage(
-              song: routeSettings.arguments as SongModel,
-            );
+            return const PlayerPage();
 
           default:
             return const SizedBox();
