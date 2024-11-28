@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:kay_musicplayer/core/utils.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -38,22 +39,40 @@ class FetchSongs {
           sortType: sortType,
           orderType: orderType,
         );
+        int count = 0;
+        for (SongModel song in songs) {
+          if (song.isMusic == true) {
+            Uint8List? unit8list = await art(id: song.id);
+            List<int> bytes = [];
+            if (unit8list != null) bytes = unit8list.toList();
+            items.add(getMediaItemFromSongModel(
+                song: song, count: count, bytes: bytes));
+
+            count++;
+          }
+        }
+      },
+    );
+    return items;
+  }
+
+  Future<List<MediaItem>> getSongsFrom(
+      {required final AudiosFromType where, required final dynamic id}) async {
+    List<MediaItem> items = [];
+
+    await accessStorage().then(
+      (_) async {
+        List<SongModel> songs = await onAudioQuery.queryAudiosFrom(where, id);
+        int count = 0;
         for (SongModel song in songs) {
           if (song.isMusic == true) {
             Uint8List? unit8list = await art(id: song.id);
             List<int> bytes = [];
             if (unit8list != null) bytes = unit8list.toList();
 
-            items.add(MediaItem(
-                id: song.uri!,
-                title: song.title,
-                artist: song.artist,
-                album: song.album,
-                genre: song.genre,
-                duration: Duration(milliseconds: song.duration!),
-                displayTitle: song.displayName,
-                artUri: unit8list == null ? null : Uri.dataFromBytes(bytes),
-                extras: {'songId': song.id, 'activate': false}));
+            items.add(getMediaItemFromSongModel(
+                song: song, count: count, bytes: bytes));
+            count++;
           }
         }
       },
@@ -130,22 +149,17 @@ class FetchSongs {
           sortType: sortType,
           orderType: orderType,
         );
+        int count = 0;
+
         for (SongModel song in songs) {
           if (song.isMusic == true) {
             Uint8List? unit8list = await art(id: song.id);
             List<int> bytes = [];
             if (unit8list != null) bytes = unit8list.toList();
 
-            items.add(MediaItem(
-                id: song.uri!,
-                title: song.title,
-                artist: song.artist,
-                album: song.album,
-                genre: song.genre,
-                duration: Duration(milliseconds: song.duration!),
-                displayTitle: song.displayName,
-                artUri: unit8list == null ? null : Uri.dataFromBytes(bytes),
-                extras: {'songId': song.id, 'activate': false}));
+            items.add(getMediaItemFromSongModel(
+                song: song, count: count, bytes: bytes));
+            count++;
           }
         }
       },

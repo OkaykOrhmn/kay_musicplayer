@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:kay_musicplayer/main.dart';
-import 'package:kay_musicplayer/ui/pages/home/library/tracks/bloc/tracks_bloc.dart';
+import 'package:kay_musicplayer/ui/pages/home/playlist/bloc/play_list_bloc.dart';
+import 'package:kay_musicplayer/ui/pages/player/cubit/like_music_cubit.dart';
+import 'package:kay_musicplayer/ui/widgets/components/dialogs/bottomsheet_handler.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class PlayerPage extends StatefulWidget {
@@ -30,7 +32,6 @@ class _PlayerPageState extends State<PlayerPage> {
           builder: (context, item) {
             if (item.data == null) return const SizedBox.shrink();
             song = item.data!;
-            context.read<TracksBloc>().add(SetActivateTrack(song: song));
             return Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -97,7 +98,12 @@ class _PlayerPageState extends State<PlayerPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(onPressed: () {}, icon: const Icon(CupertinoIcons.add)),
+          IconButton(
+              onPressed: () async {
+                await BottomsheetHandler(context)
+                    .showAddToPlaylists(audioId: song.extras!['songId']);
+              },
+              icon: const Icon(CupertinoIcons.add)),
           IconButton(
               onPressed: () {
                 final position = audioHandler.audioPlayer.position;
@@ -153,7 +159,9 @@ class _PlayerPageState extends State<PlayerPage> {
               },
               icon: const Icon(Icons.forward_10_rounded)),
           IconButton(
-              onPressed: () {},
+              onPressed: () async {
+                await BottomsheetHandler(context).showPlaylist();
+              },
               icon: const Icon(CupertinoIcons.music_note_list)),
         ],
       ),
@@ -211,8 +219,36 @@ class _PlayerPageState extends State<PlayerPage> {
                       audioHandler.skipToNext();
                     },
                     icon: const Icon(CupertinoIcons.forward_end_fill)),
-                IconButton(
-                    onPressed: () {}, icon: const Icon(CupertinoIcons.heart)),
+                BlocProvider<LikeMusicCubit>(
+                  create: (context) => LikeMusicCubit()..getLike(song),
+                  child: BlocBuilder<LikeMusicCubit, LikeMusicState>(
+                    builder: (context, state) {
+                      if (state is LikeMusicLiked ||
+                          state is LikeMusicNotLiked) {
+                        return IconButton(
+                            onPressed: () {
+                              if (state is LikeMusicLiked) {
+                                context
+                                    .read<LikeMusicCubit>()
+                                    .setLiked(audioId: song.extras!['songId']);
+                              } else {
+                                context.read<LikeMusicCubit>().setNotLiked(
+                                    audioId: song.extras!['songId']);
+                              }
+                              context
+                                  .read<PlayListBloc>()
+                                  .add(GetAllPlayLists());
+                            },
+                            icon: Icon(
+                              state is LikeMusicLiked
+                                  ? CupertinoIcons.heart_fill
+                                  : CupertinoIcons.heart,
+                            ));
+                      }
+                      return const CircularProgressIndicator();
+                    },
+                  ),
+                ),
               ],
             ),
           );

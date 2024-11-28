@@ -2,6 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kay_musicplayer/core/routes/route_generator.dart';
+import 'package:kay_musicplayer/main.dart';
 import 'package:kay_musicplayer/ui/pages/home/library/tracks/bloc/tracks_bloc.dart';
 import 'package:kay_musicplayer/ui/widgets/components/player/song_container.dart';
 
@@ -50,7 +51,6 @@ class _TracksScreenState extends State<TracksScreen>
               MediaItem song = tracks[index];
               return InkWell(
                 onTap: () {
-                  context.read<TracksBloc>().add(SetActivateTrack(song: song));
                   Navigator.pushNamed(context, Routes.player);
                 },
                 child: DecoratedBox(
@@ -60,6 +60,9 @@ class _TracksScreenState extends State<TracksScreen>
                           : null),
                   child: SongContainer(
                     song: song,
+                    onClick: () {
+                      audioHandler.changeQueue(songs: tracks);
+                    },
                   ),
                 ),
               );

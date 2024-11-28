@@ -100,6 +100,7 @@ class _HomePageState extends State<HomePage> {
               onTap: () => Navigator.pushNamed(context, Routes.player),
               child: SongContainer(
                 song: song.data!,
+                progressWork: false,
                 leading: StreamBuilder<PlaybackState>(
                   stream: audioHandler.playbackState.stream,
                   builder: (context, playbackState) {

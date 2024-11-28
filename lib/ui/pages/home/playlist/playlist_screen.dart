@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kay_musicplayer/core/routes/route_generator.dart';
+import 'package:kay_musicplayer/data/model/playlist_menu_args.dart';
 import 'package:kay_musicplayer/ui/pages/home/playlist/bloc/play_list_bloc.dart';
 import 'package:kay_musicplayer/ui/widgets/components/player/playlist_container.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -36,7 +38,17 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
             physics: const BouncingScrollPhysics(),
             itemBuilder: (context, index) {
               PlaylistModel playlist = playLists[index];
-              return PlaylistContainer(playlist: playlist);
+              return InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, Routes.playlistMenu,
+                        arguments: PlaylistMenuArgs(
+                          where: AudiosFromType.PLAYLIST,
+                          id: playlist.id,
+                          name: playlist.playlist,
+                          count: playlist.numOfSongs,
+                        ));
+                  },
+                  child: PlaylistContainer(playlist: playlist));
             },
           ),
         );

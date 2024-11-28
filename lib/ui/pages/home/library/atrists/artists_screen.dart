@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kay_musicplayer/core/routes/route_generator.dart';
+import 'package:kay_musicplayer/data/model/playlist_menu_args.dart';
 import 'package:kay_musicplayer/ui/pages/home/library/atrists/bloc/atrists_bloc.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
@@ -42,56 +44,70 @@ class _ArtistsScreenState extends State<ArtistsScreen>
           itemBuilder: (context, index) {
             ArtistModel artist = artists[index];
 
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                QueryArtworkWidget(
-                  id: artist.id,
-                  type: ArtworkType.ARTIST,
-                  artworkBorder: BorderRadius.circular(360),
-                  artworkFit: BoxFit.cover,
-                  format: ArtworkFormat.JPEG,
-                  keepOldArtwork: true,
-                  nullArtworkWidget: const Icon(
-                    CupertinoIcons.profile_circled,
-                    size: 50,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    artist.artist,
-                    style: Theme.of(context).textTheme.labelLarge,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                // Row(
-                //   children: [
-                //     Expanded(
-                //       child: Text(
-                //         'Albums: ${artist.numberOfAlbums}',
-                //         style: Theme.of(context).textTheme.bodyMedium,
-                //         maxLines: 1,
-                //         overflow: TextOverflow.ellipsis,
-                //       ),
-                //     ),
-                //     Expanded(
-                //       child: Text(
-                //         'Tracks: ${artist.numberOfTracks}',
-                //         style: Theme.of(context).textTheme.bodyMedium,
-                //         maxLines: 1,
-                //         overflow: TextOverflow.ellipsis,
-                //       ),
-                //     ),
-                //   ],
-                // ),
-              ],
-            );
+            return InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, Routes.playlistMenu,
+                      arguments: PlaylistMenuArgs(
+                        where: AudiosFromType.ARTIST_ID,
+                        id: artist.id,
+                        name: artist.artist,
+                        count: artist.numberOfTracks ?? 0,
+                      ));
+                },
+                child: artistContainer(artist));
           },
         );
       },
+    );
+  }
+
+  Column artistContainer(ArtistModel artist) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        QueryArtworkWidget(
+          id: artist.id,
+          type: ArtworkType.ARTIST,
+          artworkBorder: BorderRadius.circular(360),
+          artworkFit: BoxFit.cover,
+          format: ArtworkFormat.JPEG,
+          keepOldArtwork: true,
+          nullArtworkWidget: const Icon(
+            CupertinoIcons.profile_circled,
+            size: 50,
+          ),
+        ),
+        Expanded(
+          child: Text(
+            artist.artist,
+            style: Theme.of(context).textTheme.labelLarge,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        // Row(
+        //   children: [
+        //     Expanded(
+        //       child: Text(
+        //         'Albums: ${artist.numberOfAlbums}',
+        //         style: Theme.of(context).textTheme.bodyMedium,
+        //         maxLines: 1,
+        //         overflow: TextOverflow.ellipsis,
+        //       ),
+        //     ),
+        //     Expanded(
+        //       child: Text(
+        //         'Tracks: ${artist.numberOfTracks}',
+        //         style: Theme.of(context).textTheme.bodyMedium,
+        //         maxLines: 1,
+        //         overflow: TextOverflow.ellipsis,
+        //       ),
+        //     ),
+        //   ],
+        // ),
+      ],
     );
   }
 }

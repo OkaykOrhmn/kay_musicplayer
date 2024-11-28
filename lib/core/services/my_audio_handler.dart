@@ -1,5 +1,10 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:kay_musicplayer/core/utils.dart';
+import 'package:kay_musicplayer/main.dart';
+import 'package:kay_musicplayer/ui/pages/home/cubit/active_media_item_cubit.dart';
+import 'package:provider/provider.dart';
+import 'package:collection/collection.dart';
 
 class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   AudioPlayer audioPlayer = AudioPlayer();
@@ -14,6 +19,9 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         final playList = queue.value;
         if (index == null || playList.isEmpty) return;
         mediaItem.add(playList[index]);
+        navigatorKey.currentContext
+            ?.read<ActiveMediaItemCubit>()
+            .setMediaItem(playList[index]);
       },
     );
   }
@@ -43,6 +51,10 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         updatePosition: audioPlayer.position,
         bufferedPosition: audioPlayer.bufferedPosition,
         speed: audioPlayer.speed,
+        shuffleMode: getAudioServiceShuffleModeFromShuffleEnabled(
+            shuffle: audioPlayer.shuffleModeEnabled),
+        repeatMode:
+            getAudioServiceRepeatModeFromLoopMode(loop: audioPlayer.loopMode),
         queueIndex: event.currentIndex));
   }
 
@@ -64,6 +76,14 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         if (state == ProcessingState.completed) skipToNext();
       },
     );
+  }
+
+  Future changeQueue({required List<MediaItem> songs}) async {
+    bool areEqual = const ListEquality().equals(queue.value, songs);
+    if (!areEqual) {
+      queue.value.clear();
+      queue.value.addAll(songs);
+    }
   }
 
   @override

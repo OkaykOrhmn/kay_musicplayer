@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kay_musicplayer/core/routes/route_generator.dart';
+import 'package:kay_musicplayer/data/model/playlist_menu_args.dart';
 import 'package:kay_musicplayer/ui/pages/home/library/geners/bloc/geners_bloc.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
@@ -41,28 +43,43 @@ class _GenersScreenState extends State<GenersScreen>
           physics: const BouncingScrollPhysics(),
           itemBuilder: (context, index) {
             GenreModel genre = genres[index];
-            return Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: Theme.of(context).colorScheme.primary),
-              alignment: Alignment.center,
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(CupertinoIcons.guitars),
-                  Text(
-                    genre.genre,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            );
+            return InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, Routes.playlistMenu,
+                      arguments: PlaylistMenuArgs(
+                        where: AudiosFromType.GENRE_ID,
+                        id: genre.id,
+                        name: genre.genre,
+                        count: genre.numOfSongs,
+                      ));
+                },
+                child: genreContainer(genre));
           },
         );
       },
+    );
+  }
+
+  Container genreContainer(GenreModel genre) {
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: Theme.of(context).colorScheme.primary),
+      alignment: Alignment.center,
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(CupertinoIcons.guitars),
+          Text(
+            genre.genre,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }

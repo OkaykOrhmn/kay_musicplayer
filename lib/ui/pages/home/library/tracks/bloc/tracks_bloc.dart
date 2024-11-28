@@ -29,26 +29,6 @@ class TracksBloc extends Bloc<TracksEvent, TracksState> {
           emit(TracksFail());
         }
       }
-
-      if (event is SetActivateTrack) {
-        try {
-          int index = tracks.indexOf(event.song);
-          for (var track in tracks) {
-            track.extras!['activate'] = false;
-          }
-          tracks[index].extras!['activate'] = true;
-          if (tracks[index] != audioHandler.mediaItem.value) {
-            audioHandler.skipToQueueItem(index);
-          }
-
-          emit(TracksSuccess());
-        } catch (e) {
-          if (kDebugMode) {
-            print('error is :$e');
-          }
-          emit(TracksFail());
-        }
-      }
     });
   }
 }
